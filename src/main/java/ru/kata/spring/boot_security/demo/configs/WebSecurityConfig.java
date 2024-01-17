@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.config;
+package ru.kata.spring.boot_security.demo.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +17,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailService userDetailService;
     private final SuccessUserHandler successUserHandler;
 
-    @Autowired
     public WebSecurityConfig(SuccessUserHandler successUserHandler, UserDetailService userDetailService) {
         this.successUserHandler = successUserHandler;
         this.userDetailService = userDetailService;
@@ -26,10 +25,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/info").permitAll()
+                .antMatchers("/","/info")
+                .permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/user").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/user").hasAnyRole( "USER", "ADMIN")
                 .and()
                 .formLogin()
                 .successHandler(successUserHandler)
